@@ -287,7 +287,6 @@ class TTSModel:
         """
 
         if self.style_vector_inference is None:
-
             # pyannote.audio は scikit-learn などの大量の重量級ライブラリに依存しているため、
             # TTSModel.infer() に reference_audio_path を指定し音声からスタイルベクトルを推論する場合のみ遅延 import する
             try:
@@ -707,6 +706,9 @@ class TTSModelHolder:
     def get_model_for_gradio(self, model_name: str, model_path_str: str):
         import gradio as gr
 
+        from style_bert_vits2.constants import Languages
+        from style_bert_vits2.nlp import bert_models
+
         model_path = Path(model_path_str)
         if model_name not in self.model_files_dict:
             raise ValueError(f"Model `{model_name}` is not found")
@@ -731,6 +733,21 @@ class TTSModelHolder:
             device=self.device,
             onnx_providers=self.onnx_providers,
         )
+        # Trigger loading of the main model
+        self.current_model.load()
+
+        # Trigger loading of BERT models
+        # Note: We load for all supported languages or specific ones if we knew them.
+        # Here we load JP, EN, ZH as they are standard.
+        # This avoids the delay during the first inference.
+        if not self.current_model.is_onnx_model:
+            bert_models.load_model(Languages.JP)
+            bert_models.load_tokenizer(Languages.JP)
+            # bert_models.load_model(Languages.EN) # Optional: uncomment if needed upfront
+            # bert_models.load_tokenizer(Languages.EN)
+            # bert_models.load_model(Languages.ZH)
+            # bert_models.load_tokenizer(Languages.ZH)
+
         speakers = list(self.current_model.spk2id.keys())
         styles = list(self.current_model.style2id.keys())
         return (

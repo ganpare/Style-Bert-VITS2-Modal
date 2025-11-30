@@ -1,10 +1,14 @@
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from style_bert_vits2.utils.strenum import StrEnum
 
 
 # Style-Bert-VITS2 のバージョン
-VERSION = "2.7.0"
+try:
+    VERSION = version("style-bert-vits2")
+except PackageNotFoundError:
+    VERSION = "0.0.0"
 
 # Style-Bert-VITS2 のベースディレクトリ
 BASE_DIR = Path(__file__).parent.parent
@@ -20,9 +24,9 @@ class Languages(StrEnum):
 
 # 言語ごとのデフォルトの BERT モデルのパス
 DEFAULT_BERT_MODEL_PATHS = {
-    Languages.JP: BASE_DIR / "bert" / "deberta-v2-large-japanese-char-wwm",
-    Languages.EN: BASE_DIR / "bert" / "deberta-v3-large",
-    Languages.ZH: BASE_DIR / "bert" / "chinese-roberta-wwm-ext-large",
+    Languages.JP: "ku-nlp/deberta-v2-large-japanese-char-wwm",
+    Languages.EN: "microsoft/deberta-v3-large",
+    Languages.ZH: "hfl/chinese-roberta-wwm-ext-large",
 }
 
 # 言語ごとのデフォルトの BERT モデル (ONNX 版) のパス

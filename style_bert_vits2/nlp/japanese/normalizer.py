@@ -72,7 +72,8 @@ __PUNCTUATION_CLEANUP_PATTERN = re.compile(
     # ↓ ギリシャ文字
     + r"\u0370-\u03FF\u1F00-\u1FFF"
     # ↓ "!", "?", "…", ",", ".", "'", "-", 但し`…`はすでに`...`に変換されている
-    + "".join(PUNCTUATIONS) + r"]+",  # fmt: skip
+    + "".join(PUNCTUATIONS)
+    + r"]+",  # fmt: skip
 )
 # 数字・通貨記号の正規化パターン
 __CURRENCY_MAP = {"$": "ドル", "¥": "円", "£": "ポンド", "€": "ユーロ"}

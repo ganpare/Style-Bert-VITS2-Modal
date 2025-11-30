@@ -2,8 +2,9 @@ chcp 65001 > NUL
 @echo off
 
 pushd %~dp0
+set PYTHONPATH=%~dp0
 echo Running initialize.py...
-venv\Scripts\python initialize.py
+.venv\Scripts\python scripts\initialize.py
 
 if %errorlevel% neq 0 ( pause & popd & exit /b %errorlevel% )
 

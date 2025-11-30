@@ -24,76 +24,92 @@ def get_net_g(
 ) -> Union[SynthesizerTrn, SynthesizerTrnJPExtra]:
     if version.endswith("JP-Extra"):
         logger.info("Using JP-Extra model")
-        net_g = SynthesizerTrnJPExtra(
-            n_vocab=len(SYMBOLS),
-            spec_channels=hps.data.filter_length // 2 + 1,
-            segment_size=hps.train.segment_size // hps.data.hop_length,
-            n_speakers=hps.data.n_speakers,
-            # hps.model 以下のすべての値を引数に渡す
-            use_spk_conditioned_encoder=hps.model.use_spk_conditioned_encoder,
-            use_noise_scaled_mas=hps.model.use_noise_scaled_mas,
-            use_mel_posterior_encoder=hps.model.use_mel_posterior_encoder,
-            use_duration_discriminator=hps.model.use_duration_discriminator,
-            use_wavlm_discriminator=hps.model.use_wavlm_discriminator,
-            inter_channels=hps.model.inter_channels,
-            hidden_channels=hps.model.hidden_channels,
-            filter_channels=hps.model.filter_channels,
-            n_heads=hps.model.n_heads,
-            n_layers=hps.model.n_layers,
-            kernel_size=hps.model.kernel_size,
-            p_dropout=hps.model.p_dropout,
-            resblock=hps.model.resblock,
-            resblock_kernel_sizes=hps.model.resblock_kernel_sizes,
-            resblock_dilation_sizes=hps.model.resblock_dilation_sizes,
-            upsample_rates=hps.model.upsample_rates,
-            upsample_initial_channel=hps.model.upsample_initial_channel,
-            upsample_kernel_sizes=hps.model.upsample_kernel_sizes,
-            n_layers_q=hps.model.n_layers_q,
-            use_spectral_norm=hps.model.use_spectral_norm,
-            gin_channels=hps.model.gin_channels,
-            slm=hps.model.slm,
-        ).to(device)
+        # use meta device to speed up instantiation
+        with torch.device("meta"):
+            net_g = SynthesizerTrnJPExtra(
+                n_vocab=len(SYMBOLS),
+                spec_channels=hps.data.filter_length // 2 + 1,
+                segment_size=hps.train.segment_size // hps.data.hop_length,
+                n_speakers=hps.data.n_speakers,
+                # hps.model 以下のすべての値を引数に渡す
+                use_spk_conditioned_encoder=hps.model.use_spk_conditioned_encoder,
+                use_noise_scaled_mas=hps.model.use_noise_scaled_mas,
+                use_mel_posterior_encoder=hps.model.use_mel_posterior_encoder,
+                use_duration_discriminator=hps.model.use_duration_discriminator,
+                use_wavlm_discriminator=hps.model.use_wavlm_discriminator,
+                inter_channels=hps.model.inter_channels,
+                hidden_channels=hps.model.hidden_channels,
+                filter_channels=hps.model.filter_channels,
+                n_heads=hps.model.n_heads,
+                n_layers=hps.model.n_layers,
+                kernel_size=hps.model.kernel_size,
+                p_dropout=hps.model.p_dropout,
+                resblock=hps.model.resblock,
+                resblock_kernel_sizes=hps.model.resblock_kernel_sizes,
+                resblock_dilation_sizes=hps.model.resblock_dilation_sizes,
+                upsample_rates=hps.model.upsample_rates,
+                upsample_initial_channel=hps.model.upsample_initial_channel,
+                upsample_kernel_sizes=hps.model.upsample_kernel_sizes,
+                n_layers_q=hps.model.n_layers_q,
+                use_spectral_norm=hps.model.use_spectral_norm,
+                gin_channels=hps.model.gin_channels,
+                slm=hps.model.slm,
+            )
     else:
         logger.info("Using normal model")
-        net_g = SynthesizerTrn(
-            n_vocab=len(SYMBOLS),
-            spec_channels=hps.data.filter_length // 2 + 1,
-            segment_size=hps.train.segment_size // hps.data.hop_length,
-            n_speakers=hps.data.n_speakers,
-            # hps.model 以下のすべての値を引数に渡す
-            use_spk_conditioned_encoder=hps.model.use_spk_conditioned_encoder,
-            use_noise_scaled_mas=hps.model.use_noise_scaled_mas,
-            use_mel_posterior_encoder=hps.model.use_mel_posterior_encoder,
-            use_duration_discriminator=hps.model.use_duration_discriminator,
-            use_wavlm_discriminator=hps.model.use_wavlm_discriminator,
-            inter_channels=hps.model.inter_channels,
-            hidden_channels=hps.model.hidden_channels,
-            filter_channels=hps.model.filter_channels,
-            n_heads=hps.model.n_heads,
-            n_layers=hps.model.n_layers,
-            kernel_size=hps.model.kernel_size,
-            p_dropout=hps.model.p_dropout,
-            resblock=hps.model.resblock,
-            resblock_kernel_sizes=hps.model.resblock_kernel_sizes,
-            resblock_dilation_sizes=hps.model.resblock_dilation_sizes,
-            upsample_rates=hps.model.upsample_rates,
-            upsample_initial_channel=hps.model.upsample_initial_channel,
-            upsample_kernel_sizes=hps.model.upsample_kernel_sizes,
-            n_layers_q=hps.model.n_layers_q,
-            use_spectral_norm=hps.model.use_spectral_norm,
-            gin_channels=hps.model.gin_channels,
-            slm=hps.model.slm,
-        ).to(device)
-    net_g.state_dict()
-    _ = net_g.eval()
+        # use meta device to speed up instantiation
+        with torch.device("meta"):
+            net_g = SynthesizerTrn(
+                n_vocab=len(SYMBOLS),
+                spec_channels=hps.data.filter_length // 2 + 1,
+                segment_size=hps.train.segment_size // hps.data.hop_length,
+                n_speakers=hps.data.n_speakers,
+                # hps.model 以下のすべての値を引数に渡す
+                use_spk_conditioned_encoder=hps.model.use_spk_conditioned_encoder,
+                use_noise_scaled_mas=hps.model.use_noise_scaled_mas,
+                use_mel_posterior_encoder=hps.model.use_mel_posterior_encoder,
+                use_duration_discriminator=hps.model.use_duration_discriminator,
+                use_wavlm_discriminator=hps.model.use_wavlm_discriminator,
+                inter_channels=hps.model.inter_channels,
+                hidden_channels=hps.model.hidden_channels,
+                filter_channels=hps.model.filter_channels,
+                n_heads=hps.model.n_heads,
+                n_layers=hps.model.n_layers,
+                kernel_size=hps.model.kernel_size,
+                p_dropout=hps.model.p_dropout,
+                resblock=hps.model.resblock,
+                resblock_kernel_sizes=hps.model.resblock_kernel_sizes,
+                resblock_dilation_sizes=hps.model.resblock_dilation_sizes,
+                upsample_rates=hps.model.upsample_rates,
+                upsample_initial_channel=hps.model.upsample_initial_channel,
+                upsample_kernel_sizes=hps.model.upsample_kernel_sizes,
+                n_layers_q=hps.model.n_layers_q,
+                use_spectral_norm=hps.model.use_spectral_norm,
+                gin_channels=hps.model.gin_channels,
+                slm=hps.model.slm,
+            )
+
+    # net_g.state_dict() # これは不要そう
+    # _ = net_g.eval() # meta device なので eval() するとエラーになるかも？ロード後にやるべき
+
+    logger.debug(f"Loading weights from {model_path} start")
     if model_path.endswith(".pth") or model_path.endswith(".pt"):
+        # .pth の場合は assign=True は使えないので、一度 CPU に実体化してからロードして GPU に送る（従来通り）
+        # ただし meta からの実体化は to_empty を使う
+        net_g = net_g.to_empty(device=device)
         _ = utils.checkpoints.load_checkpoint(
             model_path, net_g, None, skip_optimizer=True, device=device
         )
     elif model_path.endswith(".safetensors"):
-        _ = utils.safetensors.load_safetensors(model_path, net_g, True, device=device)
+        # safetensors の場合は assign=True を使って直接デバイスにロード
+        _ = utils.safetensors.load_safetensors(
+            model_path, net_g, True, device=device, assign=True
+        )
     else:
         raise ValueError(f"Unknown model format: {model_path}")
+
+    _ = net_g.eval()
+    logger.debug("Loading weights end")
     return net_g
 
 
@@ -154,13 +170,14 @@ def get_text(
     else:
         raise ValueError("language_str should be ZH, JP or EN")
 
-    assert bert.shape[-1] == len(
-        phone
-    ), f"Bert seq len {bert.shape[-1]} != {len(phone)}"
+    assert bert.shape[-1] == len(phone), (
+        f"Bert seq len {bert.shape[-1]} != {len(phone)}"
+    )
 
     phone = torch.LongTensor(phone)
     tone = torch.LongTensor(tone)
     language = torch.LongTensor(language)
+    logger.debug("get_text finished")
     return bert, ja_bert, en_bert, phone, tone, language
 
 
@@ -183,6 +200,7 @@ def infer(
     given_phone: Optional[list[str]] = None,
     given_tone: Optional[list[int]] = None,
 ) -> NDArray[Any]:
+    logger.debug("infer started")
     is_jp_extra = hps.version.endswith("JP-Extra")
     bert, ja_bert, en_bert, phones, tones, lang_ids = get_text(
         text,
@@ -221,6 +239,7 @@ def infer(
         del phones
         sid_tensor = torch.LongTensor([sid]).to(device)
 
+        logger.debug("net_g.infer start")
         if is_jp_extra:
             output = cast(SynthesizerTrnJPExtra, net_g).infer(
                 x_tst,
@@ -251,6 +270,7 @@ def infer(
                 noise_scale=noise_scale,
                 noise_scale_w=noise_scale_w,
             )
+        logger.debug("net_g.infer end")
 
         audio = output[0][0, 0].data.cpu().float().numpy()
 
@@ -268,4 +288,5 @@ def infer(
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
+        logger.debug("infer finished")
         return audio
