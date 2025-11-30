@@ -284,6 +284,7 @@ if __name__ == "__main__":
                         "bert": {0: "batch_size", 2: "x_tst_max_length"},
                         "style_vec": {0: "batch_size"},
                     },
+                    dynamo=False,
                 )
                 print(
                     f"[bold green]ONNX model exported to {onnx_temp_model_path} ({time.time() - export_start_time:.2f}s)[/bold green]"
