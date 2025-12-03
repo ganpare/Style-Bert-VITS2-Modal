@@ -45,3 +45,10 @@ safetensors.ipynb
 
 playground.ipynb
 playgrounds/
+
+# Modal training artifacts
+models/
+dataset/
+training_error.txt
+conda-env/
+miniforge3/

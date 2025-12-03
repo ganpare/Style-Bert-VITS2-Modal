@@ -1,3 +1,15 @@
+# Style-Bert-VITS2 (Modal Training Fork)
+
+**[English Guide for Modal Training](/README_MODAL.md)**
+
+このリポジトリは [Style-Bert-VITS2](https://github.com/litagin02/Style-Bert-VITS2) をフォークし、[Modal](https://modal.com/) を使用したサーバーレスGPUトレーニングに対応させたものです。
+
+ローカル環境にGPUがなくても、ModalのクラウドGPUを使って高速に学習を行うことができます。
+
+詳しい使い方は **[README_MODAL.md](/README_MODAL.md)** を参照してください。
+
+---
+
 # Style-Bert-VITS2
 
 **利用の際は必ず[お願いとデフォルトモデルの利用規約](/docs/TERMS_OF_USE.md)をお読みください。**
