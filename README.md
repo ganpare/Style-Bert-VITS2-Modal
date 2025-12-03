@@ -6,7 +6,9 @@
 
 ローカル環境にGPUがなくても、ModalのクラウドGPUを使って高速に学習を行うことができます。
 
-詳しい使い方は **[README_MODAL.md](/README_MODAL.md)** を参照してください。
+詳しい使い方は以下を参照してください：
+- **[日本語ガイド (Japanese)](/README_MODAL_JP.md)**
+- **[English Guide](/README_MODAL.md)**
 
 ---
 

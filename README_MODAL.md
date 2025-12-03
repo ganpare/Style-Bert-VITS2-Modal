@@ -1,5 +1,7 @@
 # Style-Bert-VITS2 Modal Training (Forked)
 
+[日本語ガイド](/README_MODAL_JP.md)
+
 This repository is a fork of [Style-Bert-VITS2](https://github.com/litagin02/Style-Bert-VITS2), adapted for training on [Modal](https://modal.com/).
 
 ## 🚀 Features
