@@ -52,3 +52,5 @@ dataset/
 training_error.txt
 conda-env/
 miniforge3/
+
+volume_dump/
