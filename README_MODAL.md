@@ -140,6 +140,17 @@ modal volume get sbv2-vol trained_models/your_model volume_dump/your_model --for
 - `model_assets/style_vectors.npy` - Style vectors
 - `config.json`, `train.list`, `val.list` - Configuration files
 
+### Windows (PowerShell) One-liner
+
+You can run listing → mkdir → download → local listing in one command:
+
+```powershell
+modal volume ls sbv2-vol trained_models/your_model; `
+   New-Item -ItemType Directory -Force -Path .\volume_dump\your_model | Out-Null; `
+   modal volume get sbv2-vol trained_models/your_model .\volume_dump\your_model --force; `
+   Get-ChildItem -Recurse .\volume_dump\your_model | Select-Object -First 80 FullName,Length | Format-Table -AutoSize
+```
+
 ## 💾 Volume Persistence
 
 **Important**: Checkpoints saved to Modal Volume persist after the training job ends.

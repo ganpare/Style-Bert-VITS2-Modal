@@ -140,6 +140,17 @@ modal volume get sbv2-vol trained_models/your_model volume_dump/your_model --for
 - `model_assets/style_vectors.npy` - スタイルベクトル
 - `config.json`, `train.list`, `val.list` - 設定ファイル
 
+### Windows (PowerShell) のワンライナー例
+
+次回から使いやすいように、一覧→作成→ダウンロード→一覧の一連を1コマンドで実行できます。
+
+```powershell
+modal volume ls sbv2-vol trained_models/your_model; `
+   New-Item -ItemType Directory -Force -Path .\volume_dump\your_model | Out-Null; `
+   modal volume get sbv2-vol trained_models/your_model .\volume_dump\your_model --force; `
+   Get-ChildItem -Recurse .\volume_dump\your_model | Select-Object -First 80 FullName,Length | Format-Table -AutoSize
+```
+
 ## 💾 Volume永続化について
 
 **重要**: Modal Volumeに保存されたチェックポイントは、学習ジョブが終了しても残ります。
