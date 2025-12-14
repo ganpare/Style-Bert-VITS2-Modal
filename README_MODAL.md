@@ -56,28 +56,69 @@ Compress the `dataset` folder into `dataset.zip`:
 zip -r dataset.zip dataset/
 ```
 
+**Note**: `dataset.zip` will be created automatically if the `dataset/` folder exists when you run `run_training.sh`.
+
+## ⚙️ Customize Training Settings
+
+Edit the fixed values at the top of `train_sbv2.py`:
+
+```python
+# ==================== Fixed Settings ====================
+DEFAULT_MODEL_NAME = "your_model"      # Model name (used for Volume save path)
+MODAL_GPU = "H100"                     # GPU type: "A10G", "A100", "H100", etc.
+TRAIN_BATCH_SIZE = 24                  # Batch size for training
+PREPROCESS_BATCH_SIZE = 4              # Batch size for preprocessing
+TRAIN_EPOCHS = 100                     # Total number of epochs
+SNAPSHOT_EVERY_EPOCHS = 5              # Snapshot interval (save every N epochs)
+YOMI_ERROR = "skip"                    # Behavior on reading errors: "raise" or "skip"
+# ======================================================
+```
+
+**Important Settings:**
+- `DEFAULT_MODEL_NAME`: Model identifier. Also used for Volume save path
+- `MODAL_GPU`: GPU to use. `H100` recommended for faster training
+- `TRAIN_EPOCHS`: Total epochs to train
+- `SNAPSHOT_EVERY_EPOCHS`: Checkpoints are saved to Volume at this interval
+- `TRAIN_BATCH_SIZE` vs `PREPROCESS_BATCH_SIZE`: Former for training loop, latter for preprocessing (BERT generation, etc.)
+
 ## 🏋️‍♂️ Training
 
 1. **Run Training:**
    ```bash
-   ./run_training.sh
+   bash run_training.sh
    ```
-   This script will:
-   - Create a Modal Volume (`sbv2-vol`).
-   - Upload `dataset.zip`.
-   - Start the training pipeline on Modal.
-   - Download the training log (`training_error.txt`) if an error occurs.
+   
+   This script automatically:
+   - Creates Modal Volume (`sbv2-vol`)
+   - Generates `dataset.zip` from `dataset/` (if it doesn't exist)
+   - Uploads `dataset.zip` to Volume
+   - Starts training pipeline on Modal in **detached mode**
+   - Retrieves training log (`training.log`)
 
 2. **Monitor Progress:**
-   You can monitor the training progress in your terminal or on the Modal dashboard.
+   
+   Training runs in the background (detached mode). To monitor progress:
+   
+   ```bash
+   # Check on Modal dashboard
+   # Or stream logs from command line
+   modal app logs <app-id>
+   ```
+   
+   The URL to the dashboard is displayed when you run `run_training.sh`.
 
-3. **Customize Training:**
-   Edit `train_sbv2.py` to change parameters like epochs:
-   ```python
-   @app.local_entrypoint()
-   def main():
-       # Change epochs here (e.g., epochs=50 for full training)
-       train_pipeline.remote("dataset.zip", epochs=2) 
+3. **Resume Training (Checkpoint Continuation):**
+   
+   The system automatically resumes training:
+   - Checkpoints are saved to Volume every `SNAPSHOT_EVERY_EPOCHS`
+   - Running `run_training.sh` again automatically resumes from the last checkpoint
+   - **Important**: Do NOT delete the model's save path with `modal volume rm` if you want to continue training
+   
+   ```bash
+   # ❌ This will reset training (start from scratch)
+   modal volume rm -r sbv2-vol trained_models/your_model
+   
+   # ✅ Don't delete if you want to continue training
    ```
 
 ## 📥 Download Model
@@ -85,13 +126,28 @@ zip -r dataset.zip dataset/
 After training completes, download the model from the Modal Volume:
 
 ```bash
-# List files in the volume
-modal volume ls sbv2-vol trained_models/MyStyleModel
+# List files in the volume (change model name to match your settings)
+modal volume ls sbv2-vol trained_models/your_model
 
 # Download to local directory
-mkdir -p models
-modal volume get sbv2-vol trained_models/MyStyleModel models/
+mkdir -p volume_dump/your_model
+modal volume get sbv2-vol trained_models/your_model volume_dump/your_model --force
 ```
+
+**Downloaded Files Include:**
+- `checkpoints/G_*.pth`, `D_*.pth`, `WD_*.pth` - Training checkpoints
+- `model_assets/*.safetensors` - Inference model
+- `model_assets/style_vectors.npy` - Style vectors
+- `config.json`, `train.list`, `val.list` - Configuration files
+
+## 💾 Volume Persistence
+
+**Important**: Checkpoints saved to Modal Volume persist after the training job ends.
+
+- ✅ Data in Volume persists after training completion
+- ✅ Automatically resumes from checkpoint on next run
+- ⚠️ Deleting with `modal volume rm` makes recovery impossible
+- 💡 To train multiple models in parallel, change `DEFAULT_MODEL_NAME`
 
 ## 🧹 Cleanup
 
